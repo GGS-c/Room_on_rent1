@@ -1,0 +1,97 @@
+body {
+  background: linear-gradient(120deg, rgb(0, 0, 0) #FAFAF5 100%);
+  font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+  color: #222;
+  margin: 0;
+}
+
+.header {
+  background: linear-gradient(135deg, #9985F3 0%, #c52107 100%);
+  color: #000000;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-bottom: 6px solid #CDA274;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+/* .header h1 {
+  margin: 0;
+  font-size: 2rem;
+  text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+}
+
+.header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem;
+}
+
+.users-table {
+  border-collapse: collapse;
+  width: 80%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.users-table th {
+  background: #CDA274;
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.users-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.users-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.users-table tr:hover {
+  background: #f1f7ff;
+  transition: 0.2s;
+}
+
+.back-link {
+  text-align: center;
+  margin: 2rem;
+}
+
+.back-link a {
+  text-decoration: none;
+  color: #4e50d6;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.back-link a:hover {
+  color: #CDA274; 
+} */
+.table-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem auto;
+  width: 100%;
+}
+
+.table1{
+  border-collapse: collapse;
+  width: 70%;   /* 👈 shrink width for nice center */
+  margin: 0 auto; /* 👈 ensures center alignment */
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}

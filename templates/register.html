@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | RoomOnRent</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          animation: { 'blob': 'blob 7s infinite' },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="bg-[#F8FAFC] font-sans min-h-screen flex items-center justify-center p-6 overflow-x-hidden relative">
+
+  <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+  <div class="w-full max-w-[450px] relative z-10">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-200 mb-4 -rotate-3 hover:rotate-0 transition-transform duration-300">
+        <i class="fas fa-user-plus text-white text-2xl"></i>
+      </div>
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Create Account</h1>
+      <p class="text-slate-500 mt-2 font-medium">Join Room<span class="text-indigo-600">On</span>Rent today!</p>
+    </div>
+
+    <div class="bg-white/80 backdrop-blur-xl border border-white p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
+      <form id="registerForm" method="post" class="space-y-5">
+        
+        <div class="space-y-2">
+          <label for="username" class="text-sm font-bold text-slate-700 ml-1">Username</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i class="fas fa-user text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+            </div>
+            <input type="text" name="username" id="username" required
+              class="w-full pl-11 pr-4 py-3.5 bg-slate-100 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-slate-700 font-medium placeholder:text-slate-400"
+              placeholder="Pick a unique username">
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label for="password" class="text-sm font-bold text-slate-700 ml-1">Password</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+            </div>
+            <input type="password" name="password" id="password" required
+              class="w-full pl-11 pr-4 py-3.5 bg-slate-100 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-slate-700 font-medium placeholder:text-slate-400"
+              placeholder="••••••••">
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label for="role" class="text-sm font-bold text-slate-700 ml-1">Select Your Role</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i class="fas fa-briefcase text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+            </div>
+            <select name="role" id="role" required onchange="toggleSecretCode()"
+              class="w-full pl-11 pr-4 py-3.5 bg-slate-100 border-none rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-slate-700 font-medium appearance-none cursor-pointer">
+              <option value="">-- Choose Role --</option>
+              <option value="Student">Student</option>
+              <option value="Govt Employee">Govt Employee</option>
+              <option value="Owner">Owner</option>
+              <option value="User">Standard User</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+              <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 transition-all duration-500 hidden" id="secretCodeGroup">
+          <label for="owner_secret_code" class="text-sm font-bold text-indigo-600 ml-1">Owner Secret Code</label>
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i class="fas fa-key text-indigo-400"></i>
+            </div>
+            <input type="password" name="owner_secret_code" id="owner_secret_code"
+              class="w-full pl-11 pr-4 py-3.5 bg-indigo-50 border border-indigo-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-indigo-700 font-medium placeholder:text-indigo-300"
+              placeholder="Enter unique registration token">
+          </div>
+        </div>
+
+        <button type="submit" 
+          class="w-full bg-slate-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-xl shadow-slate-200 transition-all duration-300 transform active:scale-[0.98] mt-2">
+          Create Account
+        </button>
+
+        <div class="text-center pt-2">
+          <p class="text-slate-500 text-sm font-medium">
+            Already have an account? 
+            <a href="{{ url_for('login') }}" class="text-indigo-600 font-bold hover:underline ml-1">Login here</a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <p class="text-center mt-8 text-slate-400 text-xs font-bold uppercase tracking-widest">
+      &copy; 2026 RoomOnRent | Secured Registration
+    </p>
+  </div>
+
+  <script>
+    function toggleSecretCode() {
+        const roleSelect = document.getElementById("role");
+        const secretCodeGroup = document.getElementById("secretCodeGroup");
+        const secretCodeInput = document.getElementById("owner_secret_code");
+
+        if (roleSelect.value === "Owner") {
+            secretCodeGroup.classList.remove("hidden");
+            secretCodeInput.setAttribute("required", "required");
+            // Animation effect
+            secretCodeGroup.classList.add("animate-fadeIn");
+        } else {
+            secretCodeGroup.classList.add("hidden");
+            secretCodeInput.removeAttribute("required");
+            secretCodeInput.value = ""; 
+        }
+    }
+
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        let username = document.getElementById("username").value.trim();
+        let password = document.getElementById("password").value.trim();
+        let role = document.getElementById("role").value;
+
+        if (username.length < 3) {
+            alert("⚠ Username must be at least 3 characters.");
+            event.preventDefault();
+            return;
+        }
+
+        if (password.length < 4) {
+            alert("⚠ Password must be at least 4 characters.");
+            event.preventDefault();
+            return;
+        }
+
+        if (!role) {
+            alert("⚠ Please select your role.");
+            event.preventDefault();
+            return;
+        }
+    });
+
+    // Handle browser back button/auto-fill
+    document.addEventListener('DOMContentLoaded', toggleSecretCode);
+  </script>
+
+  <style>
+    .animate-fadeIn {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</body>
+</html>

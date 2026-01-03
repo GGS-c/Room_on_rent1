@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner Registration Fee</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { max-width: 450px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 12px; }
+        .btn-success { background-color: #6C63FF; border-color: #6C63FF; }
+        .btn-success:hover { background-color: #5850E0; border-color: #5850E0; }
+        .upi-box { background-color: #e9f0ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #6C63FF; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 class="card-title text-center mb-4" style="color: #6C63FF;">Owner Registration Fee</h2>
+        <p class="text-center">To finalize your owner account registration, a one-time fee is required:</p>
+        <h1 class="text-center mb-4">₹ {{ fee }}</h1>
+
+        <div class="upi-box">
+            <p><strong>Payment Instructions (UPI):</strong></p>
+            <p>1. Open your UPI app (Paytm, GPay, PhonePe).</p>
+            <p>2. Send **₹ {{ fee }}** to the following UPI ID:</p>
+            <h4 class="text-center" style="color: #FF6584;">{{ upi }}</h4>
+        </div>
+        
+        <p class="text-danger small">NOTE: This is a simulation. In a real application, you would manually verify the payment here.</p>
+
+        <form method="POST">
+            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                I Have Paid ₹{{ fee }} - Continue Registration
+            </button>
+        </form>
+        <small class="text-center mt-2">By clicking 'Continue', you confirm the payment has been made.</small>
+    </div>
+</body>
+</html>

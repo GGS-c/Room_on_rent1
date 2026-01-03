@@ -1,0 +1,140 @@
+/* General body styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* background: #f5f6fa; Light background */
+    background: linear-gradient(135deg, #02035f 0%, #c52107 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Container styling */
+.register-container {
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 700px;
+}
+
+/* Heading */
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* Form labels */
+.register-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* Input fields */
+.register-container input[type="text"],
+.register-container input[type="email"] {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.register-container input[type="text"]:focus,
+.register-container input[type="email"]:focus {
+    border-color: #3a86ff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(58, 134, 255, 0.3);
+}
+
+/* Disabled inputs */
+.register-container input[disabled] {
+    background: #e9ecef;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Submit button */
+.register-container button {
+    width: 100%;
+    padding: 12px;
+    background: #3a86ff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.register-container button:hover {
+    background: #2c6cd3;
+}
+
+/* Flash messages */
+.flash {
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.flash.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Back link */
+.register-container p a {
+    text-decoration: none;
+    color: #3a86ff;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.register-container p a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .register-container {
+        padding: 25px 20px;
+    }
+}
+/* 🌞 Default Light Theme */
+body {
+  background: linear-gradient(135deg, #9985F3 0%, #c52107 100%);
+  color: #222;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* 🌙 Dark Mode */
+body.dark-mode {
+  background: #121212;
+  color: #f1f1f1;
+}
+
+/* Example card styling */
+.room-card {
+  background: #f9f9f9;
+  color: #222;
+  border-radius: 10px;
+  padding: 10px;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode .room-card {
+  background: #1e1e1e;
+  color: #eee;
+}
+

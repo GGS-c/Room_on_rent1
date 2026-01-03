@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RoomOnRent | Smart Living Redefined</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        
+        html { scroll-behavior: smooth; }
+        
+        /* Sidebar transition */
+        #mobileMenu { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .menu-open { transform: translateX(0); }
+        .menu-closed { transform: translateX(100%); }
+    </style>
+</head>
+
+<body class="bg-[#FAFBFF] font-['Plus_Jakarta_Sans'] pt-20 md:pt-24 overflow-x-hidden selection:bg-indigo-600 selection:text-white">
+
+    <nav class="fixed top-2 md:top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl z-[2000] px-4 md:px-8 py-3 md:py-4 rounded-2xl md:rounded-[2rem] flex justify-between items-center transition-all">
+        <a href="{{ url_for('index') }}" class="flex items-center gap-2 no-underline group">
+            <div class="bg-indigo-600 p-1.5 md:p-2.5 rounded-xl shadow-lg text-white text-sm md:text-xl transform group-hover:rotate-12 transition">
+                <i class="fas fa-house-chimney-window"></i>
+            </div>
+            <span class="text-xl md:text-2xl font-[Urbanist] font-extrabold tracking-tight text-slate-900">Room<span class="text-indigo-600">On</span>Rent</span>
+        </a>
+
+        <div class="hidden lg:flex items-center gap-6">
+            <div class="flex gap-6 text-sm font-semibold text-slate-600">
+                <a href="{{ url_for('index') }}" class="hover:text-indigo-600 transition-colors no-underline">Browse</a>
+                <a href="#contact" class="hover:text-indigo-600 transition-colors no-underline">Support</a>
+            </div>
+            
+            <div class="h-6 w-px bg-slate-200 mx-2"></div>
+
+            {% if session.get('user_id') %}
+                <div class="flex items-center gap-4">
+                    {% if session.get('role') == 'Owner' %}
+                        <a href="{{ url_for('owner') }}" class="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-full text-xs font-bold no-underline hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition">
+                            <i class="fas fa-chart-line text-[10px]"></i> Dashboard
+                        </a>
+                    {% elif session.get('role') == 'Admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-full text-xs font-bold no-underline hover:bg-slate-800 shadow-lg transition">
+                            <i class="fas fa-user-shield text-[10px]"></i> Admin Panel
+                        </a>
+                    {% endif %}
+
+                    <a href="{{ url_for('profile') }}" class="flex items-center gap-2 no-underline text-slate-700 hover:text-indigo-600 transition group">
+                        <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 group-hover:border-indigo-300">
+                            <i class="fas fa-user text-indigo-600 text-sm"></i>
+                        </div>
+                        <span class="text-sm font-bold">{{ session.get('username') }}</span>
+                    </a>
+
+                    <a href="{{ url_for('logout') }}" class="text-rose-500 hover:scale-110 transition p-2" title="Logout">
+                        <i class="fas fa-power-off"></i>
+                    </a>
+                </div>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="bg-slate-900 text-white px-8 py-2.5 rounded-full text-sm font-bold shadow-lg no-underline hover:bg-indigo-600 transition">Sign In</a>
+            {% endif %}
+        </div>
+
+        <button id="mobileToggle" class="lg:hidden p-2 text-slate-800 active:scale-90 transition">
+            <i class="fas fa-bars-staggered text-2xl"></i>
+        </button>
+    </nav>
+
+    <div id="mobileMenu" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[3000] menu-closed lg:hidden">
+        <div class="absolute right-0 top-0 h-full w-[280px] bg-white shadow-2xl p-6 flex flex-col">
+            <div class="flex justify-between items-center mb-10">
+                <span class="font-extrabold text-indigo-600">Menu</span>
+                <button id="closeMenu" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-rose-50 hover:text-rose-500 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-5">
+                <a href="{{ url_for('index') }}" class="flex items-center gap-4 text-slate-700 font-bold no-underline text-lg hover:text-indigo-600 transition">
+                    <i class="fas fa-search-location w-6"></i> Browse Rooms
+                </a>
+                {% if session.get('user_id') %}
+                    <hr class="border-slate-100">
+                    {% if session.get('role') == 'Owner' %}
+                        <a href="{{ url_for('owner') }}" class="flex items-center gap-4 text-indigo-600 font-bold no-underline text-lg">
+                            <i class="fas fa-tachometer-alt w-6"></i> Dashboard
+                        </a>
+                    {% elif session.get('role') == 'Admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="flex items-center gap-4 text-slate-900 font-bold no-underline text-lg">
+                            <i class="fas fa-user-shield w-6"></i> Admin Panel
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('profile') }}" class="flex items-center gap-4 text-slate-700 font-bold no-underline text-lg hover:text-indigo-600 transition">
+                        <i class="fas fa-user-circle w-6"></i> My Profile
+                    </a>
+                    
+                    <hr class="border-slate-100">
+                    <a href="{{ url_for('logout') }}" class="flex items-center gap-4 text-rose-500 font-bold no-underline text-lg">
+                        <i class="fas fa-power-off w-6"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="flex items-center gap-4 text-slate-700 font-bold no-underline text-lg hover:text-indigo-600">
+                        <i class="fas fa-sign-in-alt w-6"></i> Login
+                    </a>
+                    <a href="{{ url_for('register') }}" class="mt-4 bg-indigo-600 text-white p-4 rounded-2xl text-center font-bold shadow-lg no-underline shadow-indigo-200">
+                        Register Now
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <section class="relative min-h-[80vh] md:min-h-[90vh] flex items-center px-4 md:px-6 overflow-hidden bg-white">
+        <div class="absolute top-0 left-1/4 w-72 h-72 bg-indigo-400/10 rounded-full blur-[100px] animate-blob"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-400/10 rounded-full blur-[120px] animate-blob animation-delay-2000"></div>
+
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 md:gap-20 items-center relative z-10">
+            <div class="space-y-6 md:space-y-8 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full shadow-sm mx-auto lg:mx-0">
+                    <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] md:text-xs font-bold text-indigo-600 tracking-wider uppercase">Live in 12+ Cities in Maharashtra</span>
+                </div>
+                <h1 class="text-4xl md:text-7xl lg:text-8xl font-[Urbanist] font-[800] text-slate-900 leading-[1.1] tracking-tight">
+                    Smart Living <br class="hidden md:block"> 
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-500 to-cyan-500">Starts Here.</span>
+                </h1>
+                <p class="text-base md:text-lg text-slate-500 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
+                    Skip the brokers. Find verified student spaces and direct PG rentals with one-click verification.
+                </p>
+                
+                <form action="{{ url_for('index') }}" method="GET" class="bg-white p-2 rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-2xl flex flex-col md:flex-row gap-2">
+                    <div class="flex-1 flex items-center px-4 md:px-6 gap-3 py-2 md:py-0">
+                        <i class="fas fa-location-dot text-indigo-500"></i>
+                        <input type="text" name="location" placeholder="Pune, Jalgaon, Mumbai..." class="w-full outline-none text-slate-700 font-medium bg-transparent text-sm md:text-base">
+                    </div>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-8 py-3 md:py-4 rounded-2xl md:rounded-[2rem] font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-200">
+                        <i class="fas fa-magnifying-glass"></i> Find Now
+                    </button>
+                </form>
+            </div>
+
+            <div class="relative hidden lg:block">
+                <div class="absolute -inset-4 bg-gradient-to-tr from-indigo-500 to-cyan-400 rounded-[3rem] opacity-20 blur-2xl animate-pulse"></div>
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80" class="relative bg-slate-100 rounded-[3rem] border-8 border-white shadow-2xl w-full h-[550px] object-cover transform rotate-1 hover:rotate-0 transition duration-700" alt="Hero Room">
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-24" id="rooms">
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Handpicked <span class="text-indigo-600">Spaces</span></h2>
+                <p class="text-slate-500 mt-2">Verified premium rooms for your comfort.</p>
+            </div>
+            <div class="bg-slate-100 p-1 rounded-xl flex gap-1">
+                <button class="bg-white px-4 py-2 rounded-lg text-xs font-bold text-slate-900 shadow-sm">Trending</button>
+                <button class="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition">Newest</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+            {% if rooms %}
+                {% for room in rooms %}
+                <div class="group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
+                    <div class="relative h-64 md:h-72 overflow-hidden p-4">
+                        <img src="{{ url_for('static', filename='uploads/' + (room['image_filename'] if room['image_filename'] else 'default.jpg')) }}" 
+                             class="w-full h-full object-cover rounded-[1.8rem] group-hover:scale-105 transition-transform duration-700" alt="Room Image">
+                        <div class="absolute top-8 right-8 px-3 py-1 rounded-full text-[10px] font-black uppercase text-white shadow-lg {{ 'bg-emerald-500' if room['availability']=='Available' else 'bg-rose-500' }}">
+                            {{ room['availability'] }}
+                        </div>
+                    </div>
+
+                    <div class="px-8 pb-8 pt-2">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 truncate group-hover:text-indigo-600 transition">{{ room['title'] }}</h3>
+                        <p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
+                            <i class="fas fa-location-dot text-indigo-500"></i> {{ room['address'] }}
+                        </p>
+
+                        <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                            <div>
+                                <span class="text-2xl font-black text-indigo-600 tracking-tight">₹{{ room['rent'] }}</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase ml-1">/ Month</span>
+                            </div>
+                            <a href="{{ url_for('room_details', room_id=room['id']) }}" class="bg-slate-900 hover:bg-indigo-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl hover:-translate-y-1">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-span-full py-20 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
+                    <i class="fas fa-search text-5xl text-slate-300 mb-4 block"></i>
+                    <p class="text-slate-500 font-bold">No rooms found in this location yet.</p>
+                    <a href="/" class="text-indigo-600 underline mt-2 inline-block no-underline">Clear all filters</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <div class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-slate-100 py-3 flex justify-around items-center lg:hidden z-[2000] px-4 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] rounded-t-3xl">
+        <a href="/" class="flex flex-col items-center gap-1 no-underline group">
+            <div class="p-2 rounded-xl bg-indigo-50 text-indigo-600"><i class="fas fa-home"></i></div>
+            <span class="text-[10px] font-bold text-slate-800">Home</span>
+        </a>
+        <a href="#rooms" class="flex flex-col items-center gap-1 no-underline">
+            <div class="p-2 rounded-xl text-slate-400"><i class="fas fa-magnifying-glass"></i></div>
+            <span class="text-[10px] font-bold text-slate-400">Search</span>
+        </a>
+        <a href="{{ url_for('profile') if session.get('user_id') else url_for('login') }}" class="flex flex-col items-center gap-1 no-underline">
+            <div class="p-2 rounded-xl text-slate-400"><i class="fas fa-user-circle"></i></div>
+            <span class="text-[10px] font-bold text-slate-400">Profile</span>
+        </a>
+    </div>
+
+    <footer id="contact" class="bg-slate-900 text-white pt-20 pb-32 md:pb-20 px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-slate-800 pb-12">
+            <div class="md:col-span-2">
+                <h3 class="text-2xl font-bold mb-6 text-white tracking-tight">Room<span class="text-indigo-400">On</span>Rent</h3>
+                <p class="text-slate-400 max-w-sm leading-relaxed mb-6">Connecting students and professionals with their perfect study environments. No brokers, just pure simplicity.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition shadow-lg text-white no-underline"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition shadow-lg text-white no-underline"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold mb-6 text-indigo-400 tracking-wider uppercase text-xs">Platform</h3>
+                <ul class="text-slate-400 text-sm space-y-4 list-none p-0 italic">
+                    <li><a href="#" class="hover:text-white transition no-underline">About Us</a></li>
+                    <li><a href="#rooms" class="hover:text-white transition no-underline">Browse Rooms</a></li>
+                    <li><a href="{{ url_for('register') }}" class="hover:text-white transition no-underline font-bold text-indigo-400">Owner Registration</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold mb-6 text-indigo-400 tracking-wider uppercase text-xs">Help & Support</h3>
+                <p class="text-slate-400 text-sm mb-2"><i class="fas fa-envelope mr-2 text-indigo-400"></i> support@roomonrent.com</p>
+                <p class="text-slate-400 text-sm"><i class="fas fa-phone mr-2 text-indigo-400"></i> +91 7798397634</p>
+            </div>
+        </div>
+        <p class="text-center text-slate-500 text-[10px] mt-12 font-bold uppercase tracking-[0.3em]">© 2026 RoomOnRent | Team Shadow</p>
+    </footer>
+
+    <script>
+        const mobileToggle = document.getElementById('mobileToggle');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileToggle.onclick = () => { mobileMenu.classList.remove('menu-closed'); mobileMenu.classList.add('menu-open'); };
+        closeMenu.onclick = () => { mobileMenu.classList.add('menu-closed'); mobileMenu.classList.remove('menu-open'); };
+        mobileMenu.onclick = (e) => { if(e.target === mobileMenu) closeMenu.onclick(); };
+    </script>
+</body>
+</html>
