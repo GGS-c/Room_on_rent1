@@ -33,6 +33,8 @@
   </script>
 </head>
 
+
+
 <body class="bg-[#F8FAFC] font-sans min-h-screen flex items-center justify-center p-6 overflow-hidden relative">
 
   <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
@@ -46,6 +48,15 @@
       <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Room<span class="text-indigo-600">On</span>Rent</h1>
       <p class="text-slate-500 mt-2 font-medium">Welcome back! Please enter your details.</p>
     </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="p-4 mb-4 text-sm rounded-lg {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
     <div class="bg-white/80 backdrop-blur-xl border border-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
       <form id="loginForm" method="post" class="space-y-6">
