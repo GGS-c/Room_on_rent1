@@ -52,19 +52,7 @@
 
     <div class="max-w-7xl mx-auto px-[5%]">
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="mb-8 p-5 rounded-3xl flex items-center justify-between border {{ 'bg-emerald-50 border-emerald-100 text-emerald-700' if category == 'success' else 'bg-rose-50 border-rose-100 text-rose-700' }} shadow-sm">
-                        <span class="font-bold flex items-center gap-3 italic">
-                            <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' }}"></i>
-                            {{ message }}
-                        </span>
-                        <button onclick="this.parentElement.remove()" class="text-xl">&times;</button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+       
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-12">
             
@@ -73,10 +61,7 @@
                 <section class="bg-white rounded-[2.5rem] border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     <div class="p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                         <h2 class="text-xl font-black text-slate-800 flex items-center gap-3">
-                            <i class="fas fa-envelope-open-text text-indigo-600"></i> New Inquiries
-                            {% if new_booking_count and new_booking_count > 0 %}
-                                <span class="bg-rose-500 text-white text-[10px] px-2 py-1 rounded-lg animate-pulse">{{ new_booking_count }} NEW</span>
-                            {% endif %}
+                            <i class="fas fa-envelope-open-text text-indigo-600"></i> Tenant Inquiries
                         </h2>
                     </div>
                     
@@ -85,9 +70,9 @@
                         <table class="w-full text-left">
                             <thead class="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100">
                                 <tr>
-                                    <th class="px-8 py-5">Property & Date</th>
-                                    <th class="px-6 py-5">Client Details</th>
-                                    <th class="px-6 py-5">Status</th>
+                                    <th class="px-8 py-5">Property Details</th>
+                                    <th class="px-6 py-5">Client Info</th>
+                                    <th class="px-6 py-5">Payment Status</th>
                                     <th class="px-8 py-5 text-right">Action</th>
                                 </tr>
                             </thead>
@@ -96,23 +81,25 @@
                                 <tr class="hover:bg-slate-50/80 transition-colors {{ 'bg-indigo-50/30' if booking['status'] == 'New' }}">
                                     <td class="px-8 py-6">
                                         <div class="font-bold text-slate-800 text-sm">{{ booking['room_title'] }}</div>
-                                        <div class="text-[10px] text-slate-400 font-bold mt-1 uppercase">{{ booking['timestamp'].split(' ')[0] }}</div>
+                                        <div class="text-[10px] text-slate-400 font-bold mt-1 uppercase">{{ booking['timestamp'] }}</div>
                                     </td>
                                     <td class="px-6 py-6">
                                         <div class="text-sm font-black text-slate-700">{{ booking['full_name'] }}</div>
                                         <div class="text-xs text-indigo-500 font-bold mt-1"><i class="fas fa-phone-alt mr-1"></i> {{ booking['contact_phone'] }}</div>
                                     </td>
                                     <td class="px-6 py-6">
-                                        {% if booking['status'] == 'New' %}
-                                            <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-amber-100 text-amber-700 text-[10px] font-black uppercase">Pending</span>
+                                        {% if booking['payment_status'] == 'Paid' %}
+                                            <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase">
+                                                <i class="fas fa-check-circle text-[8px]"></i> Paid ₹11
+                                            </span>
                                         {% else %}
-                                            <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase">Contacted</span>
+                                            <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-slate-100 text-slate-500 text-[10px] font-black uppercase">Unpaid</span>
                                         {% endif %}
                                     </td>
                                     <td class="px-8 py-6 text-right">
                                         {% if booking['status'] == 'New' %}
                                             <form action="{{ url_for('mark_contacted', booking_id=booking['id']) }}" method="post">
-                                                <button type="submit" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-indigo-600 transition shadow-lg">Mark Done</button>
+                                                <button type="submit" class="bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-indigo-600 transition shadow-lg">Contacted</button>
                                             </form>
                                         {% else %}
                                             <i class="fas fa-check-double text-emerald-500"></i>
@@ -131,26 +118,40 @@
                 <section class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
                     <div class="p-8 border-b border-slate-100 bg-slate-50/50">
                         <h2 class="text-xl font-black text-slate-800 flex items-center gap-3">
-                            <i class="fas fa-house-user text-indigo-600"></i> My Active Listings
+                            <i class="fas fa-house-user text-indigo-600"></i> My Listings
                         </h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
                         {% for room in rooms %}
                         <div class="group border border-slate-100 rounded-[2rem] p-5 hover:border-indigo-100 transition-all duration-300 hover:shadow-xl relative overflow-hidden bg-white">
                             <div class="relative h-48 rounded-2xl overflow-hidden mb-5">
-                                <img src="{{ url_for('static', filename='uploads/' + (room[5] if room[5] else 'default.jpg')) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                                <div class="absolute top-4 right-4 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-2xl {{ 'bg-emerald-500' if room[7]=='Available' else 'bg-rose-500' }}">
-                                    {{ room[7] }}
+                                <img src="{{ url_for('static', filename='uploads/' + (room['image_filename'] if room['image_filename'] else 'default.jpg')) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                
+                                <div class="absolute top-4 right-4 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-2xl 
+                                    {% if room['availability'] == 'Available' %} bg-emerald-500 
+                                    {% elif room['availability'] == 'In Booking Process' %} bg-amber-500 
+                                    {% else %} bg-rose-500 {% endif %}">
+                                    {{ room['availability'] }}
                                 </div>
                             </div>
-                            <h3 class="font-bold text-slate-800 text-lg truncate mb-1">{{ room[1] }}</h3>
-                            <p class="text-slate-400 text-xs font-medium mb-4"><i class="fas fa-location-dot mr-1"></i> {{ room[4][:40] }}...</p>
+                            
+                            <h3 class="font-bold text-slate-800 text-lg truncate mb-1">{{ room['title'] }}</h3>
+                            <p class="text-slate-400 text-xs font-medium mb-4"><i class="fas fa-location-dot mr-1"></i> {{ room['address'][:40] }}...</p>
                             
                             <div class="flex justify-between items-center pt-4 border-t border-slate-50">
-                                <span class="text-2xl font-black text-indigo-600">₹{{ room[3] }}</span>
-                                <form action="{{ url_for('toggle_availability', room_id=room[0]) }}" method="POST">
-                                    <button type="submit" class="text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl transition-all shadow-sm {{ 'bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white' if room[7]=='Available' else 'bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white' }}">
-                                        {{ 'Deactivate' if room[7] == 'Available' else 'Activate' }}
+                                <span class="text-2xl font-black text-indigo-600">₹{{ room['rent'] }}</span>
+                                <form action="{{ url_for('toggle_availability', room_id=room['id']) }}" method="POST">
+                                    <button type="submit" class="text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl transition-all shadow-sm 
+                                        {% if room['availability'] == 'Available' %} 
+                                            bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white
+                                        {% else %} 
+                                            bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white
+                                        {% endif %}">
+                                        {% if room['availability'] == 'Available' %}
+                                            Mark Occupied
+                                        {% else %}
+                                            Make Available
+                                        {% endif %}
                                     </button>
                                 </form>
                             </div>
@@ -169,43 +170,47 @@
                             <i class="fas fa-plus text-2xl"></i>
                         </div>
                         <h2 class="text-3xl font-black mb-3">List New Space</h2>
-                        <p class="text-slate-400 text-sm mb-10 leading-relaxed">Fill in the details to publish your room on our premium network.</p>
+                        <p class="text-slate-400 text-sm mb-10 leading-relaxed">Publish your property on our premium network.</p>
                         
                         <form action="{{ url_for('add_room') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                             <div class="space-y-2">
                                 <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Property Title</label>
-                                <input type="text" name="title" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all" placeholder="Modern Studio">
+                                <input type="text" name="title" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all" placeholder="e.g. Luxury 1BHK Flat">
                             </div>
                             
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Rent Amount (₹)</label>
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Monthly Rent (₹)</label>
                                 <input type="number" name="rent" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all" placeholder="5000">
                             </div>
 
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Location / Landmark</label>
-                                <input type="text" name="address" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all" placeholder="Sector 4, Pune">
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Location Details</label>
+                                <input type="text" name="address" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all" placeholder="Full address or landmark">
                             </div>
 
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Gallery</label>
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Upload Photos</label>
                                 <label class="group flex flex-col items-center justify-center w-full h-32 bg-white/5 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:bg-white/10 hover:border-indigo-500 transition-all">
                                     <div class="flex flex-col items-center justify-center text-slate-400 group-hover:text-indigo-400">
                                         <i class="fas fa-camera-retro text-2xl mb-2"></i>
-                                        <p class="text-[10px] font-bold uppercase tracking-widest" id="file-count">Add Photos</p>
+                                        <p class="text-[10px] font-bold uppercase tracking-widest" id="file-count">Select Images</p>
                                     </div>
                                     <input type="file" name="room_images[]" id="images" multiple required class="hidden" accept="image/*">
                                 </label>
                             </div>
 
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Room Description</label>
-                                <textarea name="description" required rows="4" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all resize-none" placeholder="Key highlights..."></textarea>
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Amenities</label>
+                                <input type="text" name="amenities" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all" placeholder="e.g. WiFi, Parking, Food">
                             </div>
 
-                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-5 rounded-[2rem] font-black shadow-2xl shadow-indigo-500/30 transition-all transform active:scale-95 flex items-center justify-center gap-3 group">
-                                <i class="fas fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i> 
-                                Publish Now
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">Description</label>
+                                <textarea name="description" required rows="3" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:text-slate-900 outline-none transition-all resize-none" placeholder="Details about room..."></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-5 rounded-[2rem] font-black shadow-2xl transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                                <i class="fas fa-paper-plane"></i> Publish Now
                             </button>
                         </form>
                     </div>
@@ -215,7 +220,7 @@
     </div>
 
     <p class="text-center mt-20 text-slate-400 text-[10px] font-black uppercase tracking-[0.4em]">
-        Platform Engine &copy; 2026 RoomOnRent | Dashboard v2.4
+        Platform Engine &copy; 2026 RoomOnRent | Dashboard v2.5
     </p>
 
     <script>
@@ -225,18 +230,8 @@
 
         fileInput.addEventListener('change', () => {
             const count = fileInput.files.length;
-            fileCountText.innerText = count > 0 ? `${count} Files Ready` : 'Add Photos';
+            fileCountText.innerText = count > 0 ? `${count} Files Ready` : 'Select Images';
             if(count > 0) fileCountText.classList.replace('text-slate-400', 'text-indigo-400');
-        });
-
-        // Simple smooth scroll logic for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
         });
     </script>
 </body>
